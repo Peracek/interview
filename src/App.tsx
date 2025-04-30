@@ -49,23 +49,22 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to load photos
-  const loadPhotos = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const fetchedPhotos = await fetchPhotos();
-      setPhotos(fetchedPhotos);
-    } catch (err) {
-      setError('Failed to load photos. Please try again.');
-      console.error('Error fetching photos:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Load photos on component mount
   useEffect(() => {
+    const loadPhotos = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const fetchedPhotos = await fetchPhotos();
+        setPhotos(fetchedPhotos);
+      } catch (err) {
+        setError('Failed to load photos. Please try again.');
+        console.error('Error fetching photos:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadPhotos();
   }, []);
 
@@ -103,16 +102,7 @@ function App() {
 
   return (
     <div className="app">
-      <div className="header">
-        <h1>Photo Gallery</h1>
-        <button 
-          className="refresh-button"
-          onClick={loadPhotos}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Loading...' : 'Refresh Photos'}
-        </button>
-      </div>
+      <h1>Photo Gallery</h1>
       
       {error && <div className="error-message">{error}</div>}
       
