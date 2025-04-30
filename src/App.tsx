@@ -15,32 +15,24 @@ interface Photo {
   date: string;
 }
 
-// Mock photo data
-const mockPhotos: Photo[] = [
-  { id: '1', url: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=800&auto=format&fit=crop&q=60', date: '2024-04-30' },
-  { id: '2', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&auto=format&fit=crop&q=60', date: '2024-04-30' },
-  { id: '3', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=60', date: '2024-04-30' },
-  { id: '4', url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop&q=60', date: '2024-04-29' },
-  { id: '5', url: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format&fit=crop&q=60', date: '2024-04-29' },
-  { id: '6', url: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop&q=60', date: '2024-04-28' },
-  { id: '7', url: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop&q=60', date: '2024-04-28' },
-  { id: '8', url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&auto=format&fit=crop&q=60', date: '2024-04-28' },
-];
-
 // Mock fetch function
 const fetchPhotos = async (): Promise<Photo[]> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Simulate random success/failure
-  const shouldFail = Math.random() < 0.1; // 10% chance of failure
-  
-  if (shouldFail) {
-    throw new Error('Failed to fetch photos');
+  try {
+    // Simulate network delay
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const response = await fetch('https://gist.githubusercontent.com/Peracek/677c5ec0e4b1d44180ee62fda1dc5805/raw/2d8fe412e4c8cc18eb03465bb3547892dbecd554/json');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch photos');
+    }
+    
+    const data = await response.json();
+    return data.photos;
+  } catch (error) {
+    console.error('Error fetching photos:', error);
+    throw error;
   }
-  
-  // Return a shuffled copy of the mock photos
-  return [...mockPhotos].sort(() => Math.random() - 0.5);
 };
 
 function App() {
