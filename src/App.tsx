@@ -6,7 +6,7 @@ import {
   DateHeader,
   PhotosContainer,
   PhotoItem,
-  SelectionOverlay
+  SelectionOverlay,
 } from './components/PhotoGallery';
 
 interface Photo {
@@ -15,15 +15,16 @@ interface Photo {
   date: string;
 }
 
-// Mock fetch function
 const fetchPhotos = async (): Promise<Photo[]> => {
   try {
-      const response = await fetch('https://gist.githubusercontent.com/Peracek/677c5ec0e4b1d44180ee62fda1dc5805/raw/2d8fe412e4c8cc18eb03465bb3547892dbecd554/json');
-    
+    const response = await fetch(
+      'https://gist.githubusercontent.com/Peracek/677c5ec0e4b1d44180ee62fda1dc5805/raw/2d8fe412e4c8cc18eb03465bb3547892dbecd554/json'
+    );
+
     if (!response.ok) {
       throw new Error('Failed to fetch photos');
     }
-    
+
     const data = await response.json();
     return data.photos;
   } catch (error) {
@@ -34,7 +35,6 @@ const fetchPhotos = async (): Promise<Photo[]> => {
 
 function App() {
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [selectedPhotoIds, setSelectedPhotoIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,67 +57,64 @@ function App() {
     loadPhotos();
   }, []);
 
-  // Group photos by date
-  const groupedPhotos = photos.reduce((acc, photo) => {
-    const date = photo.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(photo);
-    return acc;
-  }, {} as Record<string, Photo[]>);
+  const groupedPhotos = (() => {
+    const allDates = photos.map(photo => photo.date);
+    const uniqueDates = Array.from(new Set(allDates));
+
+    const result: Record<string, Photo[]> = {};
+
+    uniqueDates.forEach(date => {
+      const photosForDate = photos.filter(photo => {
+        return photo.date === date;
+      });
+
+      result[date] = photosForDate;
+    });
+
+    return result;
+  })();
 
   const togglePhotoSelection = (photoId: string) => {
-    setSelectedPhotoIds(prev => 
-      prev.includes(photoId) 
-        ? prev.filter(id => id !== photoId)
-        : [...prev, photoId]
-    );
+    // TODO: to implement
   };
 
   const toggleDateSelection = (date: string) => {
-    const datePhotos = groupedPhotos[date];
-    const allSelected = datePhotos.every(photo => selectedPhotoIds.includes(photo.id));
-    
-    if (allSelected) {
-      setSelectedPhotoIds(prev => prev.filter(id => !datePhotos.some(photo => photo.id === id)));
-    } else {
-      const newSelectedIds = datePhotos
-        .filter(photo => !selectedPhotoIds.includes(photo.id))
-        .map(photo => photo.id);
-      setSelectedPhotoIds(prev => [...prev, ...newSelectedIds]);
-    }
+    // TODO: to implement
   };
 
   return (
     <div className="app">
       <h1>Photo Gallery</h1>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       {isLoading ? (
         <div className="loading">Loading photos...</div>
       ) : (
         <PhotoGrid>
           {Object.entries(groupedPhotos).map(([date, datePhotos]) => (
             <DateGroup key={date}>
-              <DateHeader 
-                isSelected={datePhotos.every(photo => selectedPhotoIds.includes(photo.id))}
+              <DateHeader
+                isSelected={false} // TODO: to implement
                 onClick={() => toggleDateSelection(date)}
               >
                 {date}
               </DateHeader>
               <PhotosContainer>
-                {datePhotos.map(photo => (
-                  <PhotoItem
-                    key={photo.id}
-                    isSelected={selectedPhotoIds.includes(photo.id)}
-                    onClick={() => togglePhotoSelection(photo.id)}
-                  >
-                    <img src={photo.url} alt={`Photo ${photo.id}`} />
-                    <SelectionOverlay isSelected={selectedPhotoIds.includes(photo.id)} />
-                  </PhotoItem>
-                ))}
+                {datePhotos.map(photo => {
+                  const isSelected = false; // TODO: to implement
+
+                  return (
+                    <PhotoItem
+                      key={photo.id}
+                      isSelected={isSelected}
+                      onClick={() => togglePhotoSelection(photo.id)}
+                    >
+                      <img src={photo.url} alt={`Photo ${photo.id}`} />
+                      <SelectionOverlay isSelected={isSelected} />
+                    </PhotoItem>
+                  );
+                })}
               </PhotosContainer>
             </DateGroup>
           ))}
@@ -127,4 +124,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
