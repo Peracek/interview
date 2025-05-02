@@ -18,10 +18,7 @@ interface Photo {
 // Mock fetch function
 const fetchPhotos = async (): Promise<Photo[]> => {
   try {
-    // Simulate network delay
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const response = await fetch('https://gist.githubusercontent.com/Peracek/677c5ec0e4b1d44180ee62fda1dc5805/raw/2d8fe412e4c8cc18eb03465bb3547892dbecd554/json');
+      const response = await fetch('https://gist.githubusercontent.com/Peracek/677c5ec0e4b1d44180ee62fda1dc5805/raw/2d8fe412e4c8cc18eb03465bb3547892dbecd554/json');
     
     if (!response.ok) {
       throw new Error('Failed to fetch photos');
